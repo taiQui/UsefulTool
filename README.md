@@ -16,7 +16,7 @@ Program to inspect your computer on linux, you can give as arguments extension '
     Enter your path - default '/home'
     
     executing...
-    found test.txt at /home/taiqui/XXXX/a
+    found test.txt at /home/XXXX/a
     
     we found 1 element for test.txt
     
