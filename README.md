@@ -1,4 +1,4 @@
-# UsefullTool
+# UsefulTool
 
 ## Dirtool
 
