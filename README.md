@@ -4,7 +4,7 @@
 
 Program to inspect your computer on linux, you can give as arguments extension '.pdf' , '.txt' or fullname of file
 
-* search 
+* search
 
   * you can search precise file
 
@@ -12,17 +12,17 @@ Program to inspect your computer on linux, you can give as arguments extension '
 
     ```txt
     You are on Linux machine
-    
+
     Enter your path - default '/home'
-    
+
     executing...
     found test.txt at /home/XXXX/a
-    
+
     we found 1 element for test.txt
-    
+
     ```
 
-* count 
+* count
 
   * you can count number of file with precise extension, or some word in file's name and print if you want their path
 
@@ -30,9 +30,9 @@ Program to inspect your computer on linux, you can give as arguments extension '
 
     ```txt
     You are on Linux machine
-    
+
     Enter your path - default '/home'
-    
+
     executing...
     We found 401 times '.txt'
     ```
@@ -41,15 +41,50 @@ Program to inspect your computer on linux, you can give as arguments extension '
 
     ```
     You are on Linux machine
-    
+
     Enter your path - default '/home'
-    
+
     executing...
      at /home/xxxx/testyo
-    
+
     We found 1 times 'yo'
-    
+
     ```
+  * inspect
+
+    * You can search any strings in any file with given path.
+
+    * ex : dirtool inspect hello
+
+    ```
+    You are on Linux machine
+
+    Enter your path - default '/home'
+    .
+    executing...
+    Begin inpection of 'aaaaaaaaaaaa'
+    regex : False
+    PATH : .
+        √ String : 'aaaaaaaaaaaa ' was found in :ch2.txt located in :/hello/test
+
+    ```
+
+    * ex : dirtool inspect "[0-9a-zA-Z]" yes
+
+    ```
+    You are on Linux machine
+
+    Enter your path - default '/home'
+    .
+    executing...
+    Begin inpection of '[0-9a-zA-Z]'
+    regex : True
+    PATH : .
+        √ String : 'aaaaaaaaaaaa ' was found in :ch2.txt located in :/hello/test
+
+    ```
+
+
 
 
 ## GEN
@@ -72,4 +107,3 @@ Aa0Aa1Aa2A
 gen = ""
 gen += "Aa0Aa1Aa2A"
 ```
-
