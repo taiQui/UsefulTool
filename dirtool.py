@@ -9,6 +9,18 @@ import re
 #       - count file   + extension ou pas
 #       -
 
+def banner():
+    print "#======================================================================#"
+    print "#                              DIRTOOL                                 #"
+    print "#======================================================================#"
+    print "# Author: taiQui                                                       #"
+    print "# Version: 1.0                                                         #"
+    print "# GitHub: https://github.com/taiQui                                    #"
+    print "# Supported OS: Windows, Linux                                         #"
+    print "#======================================================================#"
+    print "\n"
+
+banner()
 list = []
 if platform.system() == "Linux":
     PATH = "/home"
