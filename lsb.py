@@ -167,7 +167,7 @@ def find():
         print '[*] FIND execution'
     for k in range(int(n_value[0]),int(n_value[1])):
         for i in range(0, im.width):
-    	    for j in range(0,im.height):
+    	    for j in range(0,l):
     		    r,g,b = pix[i,j]
     		    raux = bin(r).split('b')[1]
     		    while len(raux) < 8:
@@ -205,6 +205,9 @@ def extract():
         plain+=chr(int(hidden[i:i+8],2))
     print 'plain text :'
     print plain
+    f = open('ext.'+extension,'w')
+    f.write(plain)
+    f.close()
 if type == 1:
     find()
 elif type == 0:
