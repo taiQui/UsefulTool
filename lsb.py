@@ -121,7 +121,11 @@ if "-rgb" in fullcmd:
         print '[-] Error arguments -rgb '
         help()
         exit()
-
+else:
+    rgb_value.append('1')
+    rgb_value.append('1')
+    rgb_value.append('1')
+    rgb_value.append('1')
 if 'extract' in fullcmd:
     type = 0
 elif 'find' in fullcmd:
