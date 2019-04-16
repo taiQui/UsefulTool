@@ -13,13 +13,20 @@ extension = ''
 rgb_value =[]
 type = 0
 l_value = 0
+filter_value = ''
 # -----------------
 def help():
     print '---------------------'
-    print '# lsb [find | extract | decode] [-rgb r:g:b[:Jump]] [-v] [-f : file ] [-d : directory ] [-n : sizeDown:sizeUp] [-l : HowManyLine] [-k : key for decod]'
-    print '# Find : output by default 8 images with 0-8 lsb of input file'
+    print '# lsb [find | extract | decode | filter] [-rgb r:g:b[:Jump]] [-v] [-f : file ] [-d : directory ] [-n : sizeDown:sizeUp] [-l : HowManyLine] [-k : key for decod] [-h : print this]'
+    print '# find : output by default 8 images with 0-8 lsb of input file'
+    print '#        work with f - d - n - l '
     print '# extract : extract data through rgb choosen'
-    print '# decode : extract data with encoded key (key is formed number 1-6 and represent color channel)'
+    print '#        work with f - rgb - d - n - l'
+    print '# decode : extract data with encoded key (key is formed by number 1-3 and represent color channel)'
+    print '#        work with f - k - d - l'
+    print '# filter : view the img through r(ed)/g(reen)/b(lue) filter'
+    print '#        work with filter - f'
+    print '#        by default if no filter is given r g b value will be 0 '
     print '---------------------'
 
 
@@ -34,6 +41,9 @@ if len(fullcmd) < 2:
     help()
     exit()
 elif len(fullcmd) == 2 and ('-v' in fullcmd ):
+    help()
+    exit()
+if '-h' in fullcmd:
     help()
     exit()
 try:
@@ -140,6 +150,8 @@ elif 'find' in fullcmd:
     type = 1
 elif 'decode' in fullcmd:
     type = 2
+elif 'filter' in fullcmd:
+    type = 3
 
 if 'decode' in fullcmd:
     if '-k' in fullcmd:
@@ -147,8 +159,9 @@ if 'decode' in fullcmd:
             cont = True
             i = 0
             while i < len(fullcmd[fullcmd.index('-k')+1]) and cont:
-                if not fullcmd[fullcmd.index('-k')+1][i].isdigit():
-                    cont = False
+                if fullcmd[fullcmd.index('-k')+1][i].isdigit():
+                    if int(fullcmd[fullcmd.index('-k')+1][i]) < 0 or int(fullcmd[fullcmd.index('-k')+1][i])>3:
+                        cont = False
                 i+=1
             if cont == False:
                 print '[-] Key error'
@@ -160,12 +173,38 @@ if 'decode' in fullcmd:
     else:
         print '[-] Error no key given for decode'
         exit()
-
-if ('extract' in fullcmd and 'find' in fullcmd) or ('extract' in fullcmd and 'decode' in fullcmd) or ('decode' in fullcmd and 'find' in fullcmd):
-    print '[-] Error given 2 or more action '
+j = 0
+for i in fullcmd:
+    if i == "extract":
+        j+=1
+    elif i == "find":
+        j+=1
+    elif i == "filter":
+        j+=1
+    elif i == "decode":
+        j+=1
+if j > 1:
+    print '[-] Error you given 2 main action '
     help()
     exit()
-
+if '-filter' in fullcmd:
+    if fullcmd[fullcmd.index('-filter')+1][0] != '-':
+        if len(fullcmd[fullcmd.index('-filter')+1])<=3:
+            good = True
+            for i in fullcmd[fullcmd.index('-filter')+1]:
+                if i != 'r' and i != 'g' and i != 'b':
+                    good = False
+            if good:
+                filter_value = fullcmd[fullcmd.index('-filter')+1]
+            else:
+                print '[-] Error with given arg for filter, must include { r , g , b }'
+                exit()
+        else:
+            print '[-] Error with given arg for filter'
+            exit()
+    else:
+        print '[-] Erro with filter arg'
+        exit()
 
 def getBin(arg,i,j):
     r,g,b = arg[i,j]
@@ -202,10 +241,6 @@ if "-l" in fullcmd:
         exit()
 else:
     l_value = im.height
-
-
-
-
 
 
 if verbose :
@@ -283,12 +318,33 @@ def decode():
     decod = ''
     for i in range(0,len(data),8):
         decod += chr(int(data[i:i+8],2))
+    if verbose:
+        print 'plain text :'
     print decod
-        f = open('dec.'+extension,'w')
-        f.write(plain)
-        f.close()
+    f = open(d_value+'/dec.'+extension,'w')
+    f.write(decod)
+    f.close()
 
-
+def filter():
+    if verbose:
+        print '[*] Filter execution'
+        print '[*] with filter : '+filter_value
+    for i in range(im.height):
+        for j in range(im.width):
+            r = 0
+            g = 0
+            b = 0
+            for k in filter_value:
+                if k == 'r':
+                    r = pix[j,i][0]
+                elif k == 'g':
+                    g = pix[j,i][1]
+                elif k == 'b':
+                    b = pix[j,i][2]
+            pix[j,i] = (r,g,b)
+    im.save(d_value+'/filter'+filter_value+'.'+extension)
+    if verbose:
+        print '[*] IMG saved !'
 def extract():
     if verbose:
         print '[*] EXTRACT execution'
@@ -310,7 +366,7 @@ def extract():
     if verbose:
         print 'plain text :'
     print plain
-    f = open('ext.'+extension,'w')
+    f = open(d_value+'/ext.'+extension,'w')
     f.write(plain)
     f.close()
 
@@ -320,3 +376,5 @@ elif type == 0:
     extract()
 elif type == 2:
     decode()
+elif type == 3:
+    filter()
