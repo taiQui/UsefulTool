@@ -8,17 +8,25 @@ f_value = ''
 verbose = False
 d_value = '.'
 n_value = []
+k_value = ''
 extension = ''
 rgb_value =[]
 type = 0
-l = 0
+l_value = 0
 # -----------------
 def help():
     print '---------------------'
-    print '# lsb [find | extract] [-rgb r:g:b[:Jump]] [-v] [-f : file ] [-d : directory ] [-n : sizeDown:sizeUp] [-l : HowManyLine]'
+    print '# lsb [find | extract | decode] [-rgb r:g:b[:Jump]] [-v] [-f : file ] [-d : directory ] [-n : sizeDown:sizeUp] [-l : HowManyLine] [-k : key for decod]'
+    print '# Find : output by default 8 images with 0-8 lsb of input file'
+    print '# extract : extract data through rgb choosen'
+    print '# decode : extract data with encoded key (key is formed number 1-6 and represent color channel)'
     print '---------------------'
 
 
+
+# !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+# TRAITEMENT DES ARGUMENTS GO TO LINE 210 !!!
+#!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 fullcmd = []
 for i in range(1,len(argv)):
     fullcmd.append(argv[i])
@@ -130,11 +138,47 @@ if 'extract' in fullcmd:
     type = 0
 elif 'find' in fullcmd:
     type = 1
+elif 'decode' in fullcmd:
+    type = 2
 
-if 'extract' in fullcmd and 'find' in fullcmd:
-    print '[-] Error given 2 action '
+if 'decode' in fullcmd:
+    if '-k' in fullcmd:
+        if fullcmd[fullcmd.index('-k')+1][0] != '-':
+            cont = True
+            i = 0
+            while i < len(fullcmd[fullcmd.index('-k')+1]) and cont:
+                if not fullcmd[fullcmd.index('-k')+1][i].isdigit():
+                    cont = False
+                i+=1
+            if cont == False:
+                print '[-] Key error'
+                exit()
+            k_value = fullcmd[fullcmd.index('-k')+1]
+        else:
+            print '[-] Error no valid arg after -k option '
+            exit()
+    else:
+        print '[-] Error no key given for decode'
+        exit()
+
+if ('extract' in fullcmd and 'find' in fullcmd) or ('extract' in fullcmd and 'decode' in fullcmd) or ('decode' in fullcmd and 'find' in fullcmd):
+    print '[-] Error given 2 or more action '
     help()
     exit()
+
+
+def getBin(arg,i,j):
+    r,g,b = arg[i,j]
+    r = format(r,'b')
+    while len(r) < 8:
+        r = '0'+r
+    g = format(g,'b')
+    while len(g) < 8:
+        g = '0'+g
+    b = format(b,'b')
+    while len(b) < 8:
+        b = '0'+b
+    return r,g,b
 
 try:
     im = Image.open(f_value)
@@ -148,7 +192,7 @@ pixaux = imaux.load()
 if "-l" in fullcmd:
     if fullcmd[fullcmd.index('-l')+1][0] != '-':
         if fullcmd[fullcmd.index('-l')+1].isdigit():
-            l = int(fullcmd[fullcmd.index('-l')+1])
+            l_value = int(fullcmd[fullcmd.index('-l')+1])
         else:
             print '[-] Error NaN for -l arguments'
             exit()
@@ -157,7 +201,12 @@ if "-l" in fullcmd:
         help()
         exit()
 else:
-    l = im.width
+    l_value = im.height
+
+
+
+
+
 
 if verbose :
     print '[*] File loaded : '+f_value
@@ -170,8 +219,8 @@ def find():
     if verbose:
         print '[*] FIND execution'
     for k in range(int(n_value[0]),int(n_value[1])):
-        for i in range(0, im.width):
-    	    for j in range(0,l):
+        for i in range(0, l_value):
+    	    for j in range(0,im.width):
     		    r,g,b = pix[j,i]
     		    raux = bin(r).split('b')[1]
     		    while len(raux) < 8:
@@ -188,13 +237,64 @@ def find():
         if verbose:
             print '     [*]  file saved with '+str(int(8-k))+' lsb in '+d_value+'/decod'+str(k)+'.'+str(extension)
 
+def decode():
+    if verbose:
+        print '[*] Decode execution'
+        print '[*] key : '+k_value
+    data = ''
+    j = 0
+    yolo = False
+    while j < l_value:
+        k = 0
+        while k < im.width:
+            #Get pixel of the img
+            r1,g1,b1 = getBin(pix,k,j)
+            l = 0
+            m = 0
+            while m < len(k_value):
+                if l >= 3:
+                    if k+1 < im.height:
+                        k+=1
+                        r1,g1,b1 = getBin(pix,k,j)
+                    else:
+                        k=0
+                        if j+1 < im.width:
+                            yolo = True
+                            j+=1
+                            r1,g1,b1 = getBin(pix,k,j)
+                        else:
+                            break
+                    l=0
+                else:
+                    if k_value[m] == '1':
+                        data += r1[len(r1)-1]
+                    elif k_value[m] == '2':
+                        data += g1[len(g1)-1]
+                    elif k_value[m] == "3":
+                        data += b1[len(b1)-1]
+
+                    l+=1
+                    m+=1
+            k+=1
+        if not yolo:
+            j+=1
+        else:
+            yolo = False
+    decod = ''
+    for i in range(0,len(data),8):
+        decod += chr(int(data[i:i+8],2))
+    print decod
+        f = open('dec.'+extension,'w')
+        f.write(plain)
+        f.close()
+
 
 def extract():
     if verbose:
         print '[*] EXTRACT execution'
         print '[*] will take '+rgb_value[0]+" red - "+rgb_value[1]+" green - "+rgb_value[2]+' blue with a jumps of '+rgb_value[3]+' between each pixel'
     hidden = ''
-    for i in range(0, l):#Line
+    for i in range(0, l_value):#Line
         for j in range(0,im.width,int(rgb_value[3])): #collumn
             r,g,b = pix[j,i]
             r =format(int(r),'b')
@@ -207,12 +307,16 @@ def extract():
     plain = ''
     for i in range(0,len(hidden),8):
         plain+=chr(int(hidden[i:i+8],2))
-    print 'plain text :'
+    if verbose:
+        print 'plain text :'
     print plain
     f = open('ext.'+extension,'w')
     f.write(plain)
     f.close()
+
 if type == 1:
     find()
 elif type == 0:
     extract()
+elif type == 2:
+    decode()
