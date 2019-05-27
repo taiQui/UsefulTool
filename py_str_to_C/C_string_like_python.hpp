@@ -14,9 +14,10 @@ private:
 public:
   pythString(string);
   string getAttr();
-  void operator<<(pythString attr){
-    cout<<attr.getAttr();
+  friend ostream& operator<<(ostream& os,const pythString& attr){
+    return os<<attr._attr;
   }
+  void setAttr(string);
   string capitalize();
   string center(int,string);
   int getSize(){return this->_attr.size();}

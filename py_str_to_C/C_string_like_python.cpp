@@ -17,6 +17,11 @@ string pythString::getAttr(){
   return this->_attr;
 }
 
+void pythString::setAttr(string aux){
+  this->_attr = aux;
+}
+
+
 string pythString::center(int index,string character){
   string aux = this->_attr;
   int sizeL = (index-aux.size())%2==0?(index-aux.size())/2:((index-aux.size())/2)+1;
