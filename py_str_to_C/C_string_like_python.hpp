@@ -17,6 +17,14 @@ public:
   friend ostream& operator<<(ostream& os,const pythString& attr){
     return os<<attr._attr;
   }
+  pythString operator+=(const pythString& sup){
+    string aux = this->_attr;
+    aux+= sup._attr;
+    return aux;
+  }
+  pythString operator=(const pythString& equal){
+    this->_attr = equal._attr;
+  }
   void setAttr(string);
   string capitalize();
   string center(int,string);

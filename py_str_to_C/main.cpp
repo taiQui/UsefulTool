@@ -3,6 +3,7 @@
 
 int main(){
   pythString* a = new pythString("BoNjOUr YoLLo mAMENE");
-  a->setAttr("pute");
-  cout<<*a<<endl;
+  pythString* b = new pythString("pute");
+
+  cout<<(*a)+(*b)<<endl;
 }
