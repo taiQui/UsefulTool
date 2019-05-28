@@ -22,9 +22,17 @@ public:
     aux+= sup._attr;
     return aux;
   }
-  pythString operator=(const pythString& equal){
+  void operator=(const pythString& equal){
     this->_attr = equal._attr;
   }
+  char& operator[](int index){
+    if(index < 0 || index > this->_attr.size() ){
+      cout<<"Error out of range "<<endl<<"return first elment"<<endl;
+      return this->_attr[0];
+    }
+    return this->_attr[index];
+  }
+
   void setAttr(string);
   string capitalize();
   string center(int,string);

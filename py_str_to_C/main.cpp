@@ -4,6 +4,9 @@
 int main(){
   pythString* a = new pythString("BoNjOUr YoLLo mAMENE");
   pythString* b = new pythString("pute");
+  pythString c ("HAB");
+  pythString d ("UIP");
+  c = *a;
 
-  cout<<(*a)+(*b)<<endl;
+  cout<<c[0]<<endl;
 }
