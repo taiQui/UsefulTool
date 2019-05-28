@@ -1,6 +1,6 @@
 # Implémentation du type <'str'> python en C++
 
-Les méthodes de classe fonctionnes comme celle de python, pour les méthodes dont le retour est un tableaux/liste, j'ai choisis d'implementé ça avec des vecteurs ( cf #include <vector> )
+Les méthodes de classe fonctionnes comme celle de python, pour les méthodes dont le retour est un tableaux/liste, j'ai choisis d'implementé ça avec des vecteurs ( cf #include \<vector> )
 
 Plus ou moins toutes les méthodes ne changent pas la valeurs de l'attribut.
 
