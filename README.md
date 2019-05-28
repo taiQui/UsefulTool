@@ -107,3 +107,27 @@ Aa0Aa1Aa2A
 gen = ""
 gen += "Aa0Aa1Aa2A"
 ```
+
+## LSB
+Algorithm to find some LSB stegano in picture
+* find 
+just generate 8 images with 1 to 8 lsb 
+* extract 
+extract value with lsb bit 
+* decode
+ LSB decode with key ( -k )
+* filter
+ generate image with specified filter ( blue, red, green )
+* option
+ * -rgb r:g:b:s
+  r bit in red channel: g bits in green channel : b bits in blue channel : jump s pixel 
+ * -l 
+  how many line apply LSB
+ * -k
+  if LSB encoded
+
+## PIT
+Algorithm to decode PIT stegano technique
+
+## PVD
+Algorithm to decode PVD stegano technique
