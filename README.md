@@ -119,7 +119,7 @@ extract value with lsb bit
 * filter
  generate image with specified filter ( blue, red, green )
 * option
-  * -rgb r:g:b:s
+  * -rgb r:g\:b:s
   r bit in red channel: g bits in green channel : b bits in blue channel : jump s pixel 
   * -l 
   how many line apply LSB
