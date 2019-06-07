@@ -4,6 +4,7 @@
 #include <string>
 #include <iostream>
 #include <vector>
+
 using namespace std;
 
 class pythString {
@@ -17,21 +18,9 @@ public:
   friend ostream& operator<<(ostream& os,const pythString& attr){
     return os<<attr._attr;
   }
-  pythString operator+=(const pythString& sup){
-    string aux = this->_attr;
-    aux+= sup._attr;
-    return aux;
-  }
-  void operator=(const pythString& equal){
-    this->_attr = equal._attr;
-  }
-  char& operator[](int index){
-    if(index < 0 || index > this->_attr.size() ){
-      cout<<"Error out of range "<<endl<<"return first elment"<<endl;
-      return this->_attr[0];
-    }
-    return this->_attr[index];
-  }
+  pythString operator+=(const pythString& sup);
+  void operator=(const pythString& equal);
+  char& operator[](int index);
 
   void setAttr(string);
   string capitalize();
@@ -50,7 +39,7 @@ public:
   bool islower();
   bool isupper();
   bool isspace();
-  bool istitle();  // A FAIRE QUAND J'AURAI FAIS SPLIT
+  bool istitle();
   string join(string[],int);
   int size();
   string ljust(int,string);
