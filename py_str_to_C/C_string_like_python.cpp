@@ -62,7 +62,6 @@ bool pythString::startswith(string arg,int s_index,int e_index){
   if(s_index<= 0 || s_index > this->_attr.size()) s_index = 0;
   if(s_index+arg.size() > e_index) {return false;}
   if(e_index < arg.size()) return false;
-  cout<<"test : "<<this->_attr.substr(s_index,arg.size())<<endl;
   return this->_attr.substr(s_index,arg.size()) == arg;
 }
 
@@ -392,4 +391,22 @@ string pythString::title(){
     temp+= aux[i]+" ";
   }
   return temp+aux[aux.size()-1];
+}
+
+// OPERATOR REDEFINITION
+void pythString::operator=(const pythString& equal){
+  this->_attr = equal._attr;
+}
+
+char& pythString::operator[](int index) {
+    if(index < 0 || index > this->_attr.size() ){
+      throw out_of_range("Operator[] - Bad index - out_of_range");
+    }
+    return this->_attr[index];
+}
+
+pythString pythString::operator+=(const pythString& sup){
+  string aux = this->_attr;
+  aux+= sup._attr;
+  return aux;
 }

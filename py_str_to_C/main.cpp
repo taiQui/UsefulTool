@@ -7,6 +7,9 @@ int main(){
   pythString c ("HAB");
   pythString d ("UIP");
   c = *a;
-
-  cout<<c[0]<<endl;
+  try{
+    cout<<c[-1]<<endl;
+  }catch(std::out_of_range& e){
+    cout << e.what() <<endl;
+  }
 }
