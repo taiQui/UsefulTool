@@ -220,8 +220,8 @@ def getBin(arg,i,j):
     return r,g,b
 
 try:
-    im = Image.open(f_value)
-    imaux = Image.open(f_value)
+    im = Image.open(f_value).convert('RGB')
+    imaux = Image.open(f_value).convert('RGB')
 except:
     print '[-] Error opening file'
     exit()
