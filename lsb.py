@@ -21,7 +21,7 @@ def help():
     print '# find : output by default 8 images with 0-8 lsb of input file'
     print '#        work with f - d - n - l '
     print '# extract : extract data through rgb choosen'
-    print '#        work with f - rgb - d - n - l'
+    print '#        work with f - rgb - d - l'
     print '# decode : extract data with encoded key (key is formed by number 1-3 and represent color channel)'
     print '#        work with f - k - d - l'
     print '# filter : view the img through r(ed)/g(reen)/b(lue) filter'
@@ -288,12 +288,12 @@ def decode():
             m = 0
             while m < len(k_value):
                 if l >= 3:
-                    if k+1 < im.height:
+                    if k+1 < im.width:
                         k+=1
                         r1,g1,b1 = getBin(pix,k,j)
                     else:
                         k=0
-                        if j+1 < im.width:
+                        if j+1 < im.height:
                             yolo = True
                             j+=1
                             r1,g1,b1 = getBin(pix,k,j)
