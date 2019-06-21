@@ -2,19 +2,24 @@
 # -*- coding: utf-8 -*-
 from PIL import Image
 from os import system,listdir
+import argparse
 
 class LSB:
     def __init__(self,*arg,**kwargs):
-        if 'filename' in kwargs:
+
+        if kwargs['filename'] != None:
             self.filename = kwargs['filename']
         else:
             self.filename = ""
-        if 'dir' in kwargs:
+        if kwargs['dir'] != None:
             self.outputDirectory = kwargs['dir']
         else:
-            self.outputDirectory = "./lsb_output"
-        if 'verbose' in kwargs:
-            self.verbose = True
+            self.outputDirectory = "lsb_output"
+        if kwargs['verbose'] != None:
+            if kwargs['verbose'] == True:
+                self.verbose = True
+            else:
+                self.verbose = False
         else:
             self.verbose = False
         self.file = ""
@@ -36,7 +41,7 @@ class LSB:
 
     def checkOutputDirectory(self):
         directory = listdir('.')
-        return ('lsb_ouput' in directory)
+        return (self.outputDirectory in directory)
 
     def open(self,*arg,**kwargs):
         try:
@@ -50,6 +55,7 @@ class LSB:
         except Exception as e:
             print 'Error opening file '
             print e
+            exit()
         self.getPixel()
 
     def getPixel(self):
@@ -81,10 +87,19 @@ class LSB:
         if self.verbose:
             print '[+] Find methode'
         self.numberLsbTakenForOutput = [0,9]
-        if 'nblsb' in kwargs:
-            self.numberLsbTakenForOutput = kwargs['nblsb']
-        if 'line' in kwargs:
-            self.nbLine = kwargs['line']
+
+        if kwargs['nblsb'] != None:
+            try:
+                self.numberLsbTakenForOutput = kwargs['nblsb']
+            except Exception as e:
+                print '[-] Error in \'nslsb\' arguments'
+                print e
+        if kwargs['line'] != None:
+            try:
+                self.nbLine = int(kwargs['line'])
+            except Exception as e:
+                print '[-] Error in \'line\' arguments'
+                print e
         else:
             self.nbLine = self.file.height
         for k in range(self.numberLsbTakenForOutput[0],self.numberLsbTakenForOutput[1]):
@@ -109,6 +124,8 @@ class LSB:
 
     def filter(self,filter):
         self.createOutputDirectory()
+        if 'r' not in filter and 'g' not in filter and 'b' not in filter:
+            print '[*] Warning ! No rgb filter available in your given filter '
         if self.verbose:
             print '[+] Filter methode'
             print '[+] with filter : '+filter
@@ -130,13 +147,13 @@ class LSB:
             print '[+] filter saved !'
 
     def extract(self,*arg,**kwargs):
-        rgb_value = ""
-        if 'rgb' in kwargs:
-            rgb_value = kwargs['rgb']
-        else:
-            rgb_value = [1,1,1,1]
-        if 'line' in kwargs:
-            self.nbLine = kwargs['line']
+        rgb_value = kwargs['rgb']
+        if kwargs['line'] != None:
+            try:
+                self.nbLine = int(kwargs['line'])
+            except Exception as e:
+                print '[-] Error in \'line\' argument'
+                print e
         else:
             self.nbLine = self.file.height
         if self.verbose:
@@ -167,8 +184,19 @@ class LSB:
             print '[+] File with extracted data created in output directory'
 
     def decode(self,key,*arg,**kwargs):
-        if 'line' in kwargs:
-            self.nbLine = kwargs['line']
+        if not key.isdigit():
+            print '[-] Error key not a number in range [1-3]'
+            exit()
+        for i in key:
+            if int(i) > 3 or int(i) < 0:
+                print '[-] Error key not in range [1-3]'
+                exit()
+        if kwargs['line'] != None:
+            try:
+                self.nbLine = int(kwargs['line'])
+            except Exception as e:
+                print '[-] Error in \'line\' argument'
+                print e
         else:
             self.nbLine = self.file.height
 
@@ -226,7 +254,49 @@ class LSB:
         if self.verbose:
             print '[+] File with extracted data created in output directory'
 
+parser = argparse.ArgumentParser()
+parser.add_argument('-f','--filename',help="The filename to compute stegano operation",required=True)
+parser.add_argument('-dir','--output_directory',help="The output directory to store resultat")
+parser.add_argument('-v','--verbose',help="Give more output",action="store_true")
+parser.add_argument('-rgb','--rgb',help="How many bits to use to applicate lsb and if there is a constant jump => R:G:B[:Jump]\nEx : -rgb 1:1:1  or -rgb 2:1:4:1")
+parser.add_argument('-l','--line',help="The line's number which applicate pvd",type=int)
+parser.add_argument('-n','--range_output',help="Give the range of outputed picture with find option => sizeDown(default:0):sizeTop(exclude)(default:9)\nEx : -n 0:9")
+parser.add_argument('-k','--key_for_decode',help="Give the key which use to LSB encoded")
+parser.add_argument('-m','--method',help="Give methode to compute => find | extract | filter | decode",required=True)
+parser.add_argument('-filter','--filter_to_applicate',help='Filter to use filter option')
+args = parser.parse_args()
 if __name__ == '__main__':
-    a = LSB(filename='seh1.png',verbose='True')
-    a.open(rgb='RGB')
-    a.decode('132123')
+    lsb = LSB(filename=args.filename,dir=args.output_directory,verbose=args.verbose,required=True)
+    lsb.open(rgb=True)
+    if args.range_output != None:
+        aux = []
+        aux.append(int(args.range_output.split(':')[0]))
+        aux.append(int(args.range_output.split(':')[1]))
+        args.range_output = aux
+    if args.rgb != None:
+        try:
+            if len(args.rgb.split(':')) < 3:
+                args.rgb = [1,1,1,1]
+            elif len(args.rgb.split(':')) == 3:
+                args.rgb = [int(args.rgb.split(':')[0]),int(args.rgb.split(':')[1]),int(args.rgb.split(':')[2]),1]
+            else:
+                args.rgb = [int(args.rgb.split(':')[0]),int(args.rgb.split(':')[1]),int(args.rgb.split(':')[2]),int(args.rgb.split(':')[3])]
+        except Exception as e:
+            print '[-] Error on rgb argument'
+            print e
+    if args.method == 'find':
+        lsb.find(nblsb=args.range_output,line=args.line)
+    elif args.method == "extract":
+        lsb.extract(rgb=args.rgb,line=args.line)
+    elif args.method == "filter":
+        if args.filter_to_applicate:
+            lsb.filter(args.filter_to_applicate)
+        else:
+            print '[-] Error on given filter'
+            exit()
+    elif args.method == "decode":
+        if args.key_for_decode:
+            lsb.decode(args.key_for_decode,line=args.line)
+        else:
+            print '[-] Error on key given argument for decode'
+            exit()
