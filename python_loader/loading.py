@@ -7,7 +7,7 @@ import time,os,random
     github : https://github.com/taiQui/
 """
 class Loading:
-    def __init__(self,max=100,show_percent=False,load_color="default"):
+    def __init__(self,max=100,show_percent=False,load_color="default",adaptative=False):
         class Color:
             red = '\033[31m'
             green = '\033[32m'
@@ -22,6 +22,8 @@ class Loading:
         self.state = 0
         self.range_max = max
         self.show_percent = show_percent
+        self.text = ""
+        self.adaptative = adaptative
         # Turning pipe
         self.current = "|"
         # Bar
@@ -29,8 +31,9 @@ class Loading:
         self.bar_direction = "right"
         self.bar_color = Color.default
         # Up down letter
-        self.text = ""
         self.udl_direction = "right"
+        # Montain
+        self.montain = [".",":","⁝","⁞"]
     def square_loading(self,text=""):
         """
             text : text printed before loading  | ex :   text  [■■■■■   ]
@@ -74,7 +77,7 @@ class Loading:
             size = int(c*0.9)
         else:
             if size < 1 and size > c:
-                raise Exception("Size of map > size of screen")
+                raise Exception("Size of map > size of screen ("+str(c)+")")
         if bar_size >= c :
             raise Exception("Size of bar > size of screen")
         if len(self.bar)==0:
@@ -124,6 +127,12 @@ class Loading:
             self.text = text.lower()
             self.state = 0
         tmp = []
+        l,c = self.getSizeScreen()
+        if len(text) > c:
+            if self.adaptative:
+                text = text[:c]
+            else:
+                raise Exception("Length of text must be inferior to width of terminal ("+str(c)+")")
         for i in range(len(text)):
             if i == self.state:
                 tmp.append(self.text[i].upper())
@@ -146,6 +155,38 @@ class Loading:
         self.text = "".join(tmp)
         print(self.text,end="\r")
         time.sleep(speed)
+
+    def dot_waiting(self,text="",dot=".",dot_max=4,speed=0.3):
+        l,c = self.getSizeScreen()
+        if len(text)+dot_max > c:
+            if self.adaptative:
+                dot_max = (c-len(text))*0.98
+            else:
+                raise Exception("dot_max size must be inferior to width of terminal ("+str(c)+")")
+        print(text+dot*self.state+" "*(c-len(text+dot*self.state)),end="\r")
+        self.state +=1
+        if self.state > dot_max:
+            self.state = 0
+        time.sleep(speed)
+
+
+    def mountain_wainting(self,text="Waiting ",speed=0.2,max=10):
+        l,c = self.getSizeScreen()
+        if len(text)+max > c:
+            if not self.adaptative:
+                raise Exception("max must be inferior to width of terminal ("+str(c)+") ")
+            else:
+                max = int((c-len(text))*0.95)
+        if self.text == "":
+            self.text = text
+        print(self.text+" "*(c-len(self.text)),end='\r')
+        self.text += self.montain[random.randrange(0,len(self.montain))]
+        self.state += 1
+        if self.state > max:
+            self.state = 0
+            self.text = text
+        time.sleep(speed)
+
     def check_range(self):
         if self.state > self.range_max:
             raise Exception("Range max reached")
@@ -155,6 +196,11 @@ class Loading:
         return ts.lines,ts.columns
 
 if __name__ == "__main__":
-    a = Loading()
+    a = Loading(adaptative=True)
+    # a = Loading()
+
+    b = [".",":","⁝"]
+    c = 0
+    d ="Waiting "
     while True:
-        a.bar_loading(speed=0.05)
+        a.up_down_waiting(text="a"*90)

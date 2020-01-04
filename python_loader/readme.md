@@ -13,6 +13,9 @@ loader = Loading()
 			range max of loading  0  - max 
 	show_percent : boolean
     		show or not the percent of progressing
+    adaptative : boolean
+    		when you chose size which exceeds max widght of terminal
+    		not raise an Exception, adjuste the max size to max we can use
 """"
 
 ```
@@ -23,7 +26,7 @@ loader = Loading()
 
 Simple Loading screen, progress state => self.state
 
-
+[#####                     ]  20%
 
 ```python
 from loading import Loading
@@ -65,6 +68,14 @@ while True
 ## Bar loading
 
 Simple bar moving to the right until reaching right border then moving to the left until reaching left border ...
+
+[**                                    ]
+
+[   **                                 ]
+
+[                                    **]
+
+[                                  **  ]
 
 ```python
 from loading import Loading
@@ -119,6 +130,64 @@ while True
 			text to print
 	speed : float
 			speed of animation
+""""
+```
+
+## Dot waiting
+
+Waiting 
+
+Waiting .
+
+Waiting ..
+
+Waiting ...
+
+Waiting 
+
+```python
+from loading import Loading
+loader = Loading()
+while True
+    loader.dot_waiting()
+    
+""""
+	text : str
+			text to Write before animation 
+	dot : str
+			body of animation ( default : '.')
+	dot_max : int
+			number of successive time printing 'dot'
+	speed :float
+			speed of the animation
+""""
+```
+
+## Mountain waiting
+
+Waiting .
+
+Waiting .:
+
+Waiting .:.
+
+Waiting .:.::
+
+[...]
+
+```python
+from loading import Loading
+loader = Loading()
+while True
+    loader.mountain_waiting()
+    
+""""
+	text : str
+			text to write before animation
+	speed :float
+			speed of animation
+	max : int
+			width max of the mountain
 """"
 ```
 
