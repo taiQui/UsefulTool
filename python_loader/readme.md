@@ -163,7 +163,7 @@ while True
 """"
 ```
 
-## Mountain waiting
+## Mountain waiting
 
 Waiting .
 
