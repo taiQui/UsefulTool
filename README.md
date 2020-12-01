@@ -1,5 +1,42 @@
 # UsefulTool
 
+## BF
+
+Script to automate threading with custom bruteforce
+
+```python
+from bf import BF
+# use case 1 : gobuster like
+def brute(directory):
+    r = requests.get(f"https://something/{directory}")
+    if r.status_code == 200:
+        print(f"[+] {directory} is present")
+BF(brute,item1=directory_wordlist.txt)
+
+#use case 2 : login brute force
+def brute(username,password):
+    r = requests.post("http://something",data={"username":username,"password":password})
+    if good_one:
+        print("[+] Creds found")
+BF(brute,item1=username.lst,item2=password.lst)
+
+#use case 3 : bruteforce hash
+def brute(rockyou_item,hashfound):
+    hash = # hashing rockyou_item with some custom hashing method
+    if hash == hashfound:
+        print("[+] found ")
+        return True   #<=== return True will stop All thread because there is only one posibilities here
+BF(brute,item1=rockyou.txt,item2=file_with_your_hash)
+```
+
+
+
+
+
+
+
+
+
 ## Dirtool
 
 Program to inspect your computer on linux, you can give as arguments extension '.pdf' , '.txt' or fullname of file
